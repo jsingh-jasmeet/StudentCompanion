@@ -4,4 +4,4 @@ Each course has lectures associated with it, using which a graph is created. Thi
 
 The option to edit any particular lecture's status is currently pending.
 
-![alt tag](http://i66.tinypic.com/2lvn148.jpg)
+![alt tag](http://i65.tinypic.com/ke7m0j.jpg)
