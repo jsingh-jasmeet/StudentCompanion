@@ -25,33 +25,22 @@ import java.util.List;
 
 public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHolder> {
 
+    private static final String TAG = "LectureAdapter";
     private static Long ID;
     private static View lastSelectedView;
     private static int lastSelectedViewLectureNumber;
     private static Context context;
     private static RelativeLayout viewCourseActivityLayout;
-    private DBManager dbManager;
-
-    private static final String TAG = "LectureAdapter";
-
-    private View view;
-
     private static List<Lecture> mainList;
-
     private static LineChart chart;
-
-    private static boolean initial = true;
-
+    private DBManager dbManager;
+    private View view;
     private DisplayMetrics displayMetrics;
 
-    public LectureAdapter(Context context, List<Lecture> mainList) {
-
+    public LectureAdapter(Context ctx, List<Lecture> list) {
+        context = ctx;
+        mainList = list;
         displayMetrics = context.getResources().getDisplayMetrics();
-        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-
-        this.context = context;
-        this.mainList = mainList;
         dbManager = new DBManager(context);
         dbManager.open();
     }
@@ -62,7 +51,6 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         view = LayoutInflater.from(context).inflate(R.layout.lecture_list_item, null);
         MyViewHolder myViewHolder = new MyViewHolder(view);
 
@@ -82,12 +70,11 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
         Lecture lecture = mainList.get(position);
 
         holder.lectureNumberTextView.setText(Integer.toString(lecture.getLectureNumber()));
-        holder.statusTextView.setText(lecture.isPresent() == true ? "Present" : "Absent");
-        holder.statusTextView.setTextColor(lecture.isPresent() == true ? ContextCompat.getColor(context, R.color.colorGreen) : ContextCompat.getColor(context, R.color.colorRed));
+        holder.statusTextView.setText(lecture.isPresent() ? "Present" : "Absent");
+        holder.statusTextView.setTextColor(lecture.isPresent() ? ContextCompat.getColor(context, R.color.colorGreen) : ContextCompat.getColor(context, R.color.colorRed));
         holder.lecturesAttendedTextView.setText(Integer.toString(lecture.getLecturesAttended()) + "/" + Integer.toString(lecture.getLectureNumber()));
         holder.attendanceTextView.setText(Integer.toString(lecture.getAttendance()) + "%");
         holder.attendanceTextView.setTextColor(lecture.isSafe() ? ContextCompat.getColor(context, R.color.colorGreen) : ContextCompat.getColor(context, R.color.colorRed));
-
 
         int newRecycledViewLectureNumber = Integer.parseInt(((TextView) holder.itemView.findViewById(R.id.lecture_number)).getText().toString());
 
@@ -95,7 +82,6 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
         else if (lastSelectedViewLectureNumber == newRecycledViewLectureNumber)
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimaryLight));
-
     }
 
 
@@ -111,7 +97,6 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
         LineChart chart = (LineChart) viewCourseActivityLayout.findViewById(R.id.chart);
         chart.notifyDataSetChanged();
         chart.invalidate();
-
     }
 
     @Override
@@ -124,14 +109,20 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
         super.onViewRecycled(holder);
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public void setSelectionsToNull() {
+        lastSelectedViewLectureNumber = -1;
+        lastSelectedView = null;
+        mainList = null;
+    }
+
+    static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView lectureNumberTextView;
         TextView statusTextView;
         TextView lecturesAttendedTextView;
         TextView attendanceTextView;
 
-        public MyViewHolder(View itemView) {
+        MyViewHolder(View itemView) {
             super(itemView);
 
             lectureNumberTextView = (TextView) itemView.findViewById(R.id.lecture_number);
@@ -140,18 +131,13 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
             attendanceTextView = (TextView) itemView.findViewById(R.id.lectures_attendance);
 
             itemView.setOnClickListener(this);
-
         }
 
         @Override
         public void onClick(View view) {
-
-            String attendance = ((TextView) view.findViewById(R.id.lectures_attendance)).getText().toString();
-
             int viewXValue = Integer.parseInt(((TextView) view.findViewById(R.id.lecture_number)).getText().toString());
-            int viewYValue = Integer.parseInt(attendance.substring(0, attendance.indexOf('%')));
-
             int viewTag;
+
             if (view.getTag() != null)
                 viewTag = ((LectureTag) view.getTag()).getTag();
             else
@@ -165,10 +151,8 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
                     chart.highlightValue(viewXValue, -1, false);
                 }
             } else {
-
                 if (lastSelectedView != null) {
                     lastSelectedView.setBackgroundColor(Color.TRANSPARENT);
-
                     view.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimaryLight));
                     lastSelectedView = view;
                     lastSelectedViewLectureNumber = Integer.parseInt(((TextView) lastSelectedView.findViewById(R.id.lecture_number)).getText().toString());
@@ -195,15 +179,7 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
                         chart.moveViewToX(viewXValue - 14);
                 }
             }
-
             view.setTag(null);
         }
-
-    }
-
-    public void setSelectionsToNull() {
-        lastSelectedViewLectureNumber = -1;
-        lastSelectedView = null;
-        mainList = null;
     }
 }

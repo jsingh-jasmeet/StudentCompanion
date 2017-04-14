@@ -16,14 +16,11 @@ public class MyLoader extends AsyncTaskLoader<Cursor> {
     public static final String TAG = "MyLoader";
 
     // Database Helper Class
-    DBManager dbManager;
-
-    Cursor cursor;
-
+    private DBManager dbManager;
+    private Cursor cursor;
+    private Context ctx;
     // We hold a reference to the Loader’s data here.
     private Cursor mData;
-
-    Context ctx;
 
     public MyLoader(Context ctx) {
         super(ctx);

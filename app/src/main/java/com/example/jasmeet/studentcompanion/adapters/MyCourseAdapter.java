@@ -30,12 +30,10 @@ import com.example.jasmeet.studentcompanion.models.Lecture;
 
 public class MyCourseAdapter extends SimpleCursorAdapter {
 
-    private Context ctx;
-    final float scale;
-
-    DBManager dbManager;
-
     private static final String TAG = "MyCourseAdapter";
+    private final float scale;
+    private DBManager dbManager;
+    private Context ctx;
 
     public MyCourseAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
@@ -50,7 +48,6 @@ public class MyCourseAdapter extends SimpleCursorAdapter {
     public void bindView(View view, Context context, final Cursor cursor) {
 
         final int position = cursor.getPosition();
-        final View view1 = view;
 
         super.bindView(view, context, cursor);
         if (cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SAFE)) == 1) {
@@ -65,7 +62,6 @@ public class MyCourseAdapter extends SimpleCursorAdapter {
             percentSymbolTextView.setTextColor(ContextCompat.getColor(ctx, R.color.colorRed));
         }
 
-
         /* Setting values for Safe by/Short by textviews */
 
         updateShortBy(view, cursor);
@@ -73,8 +69,7 @@ public class MyCourseAdapter extends SimpleCursorAdapter {
         /* POP UP WINDOW OPTIONS */
 
         String[] options = ctx.getResources().getStringArray(R.array.popup_menu_list_items);
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ctx, R.layout.popup_window_layout, options);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(ctx, R.layout.popup_window_layout, options);
 
         final ListPopupWindow listPopupWindow = new ListPopupWindow(ctx);
         listPopupWindow.setAdapter(arrayAdapter);
@@ -164,14 +159,12 @@ public class MyCourseAdapter extends SimpleCursorAdapter {
                 notifyDataSetChanged();
             }
         });
-
     }
 
-    public void updateShortBy(View view, Cursor cursor) {
+    private void updateShortBy(View view, Cursor cursor) {
         int totalLectures = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.TOTALLECTURES));
         double minimumAttendanceRequired = (double) cursor.getInt(cursor.getColumnIndex(DatabaseHelper.MINIMUMATTENDANCEREQUIRED)) / 100;
         int lecturesAttended = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.LECTURESATTENDED));
-
         int shortBy = (int) ((Math.ceil((double) totalLectures * minimumAttendanceRequired)) - lecturesAttended);
 
         TextView shortByTextView = (TextView) view.findViewById(R.id.list_item_short_by_textview);
@@ -187,14 +180,14 @@ public class MyCourseAdapter extends SimpleCursorAdapter {
 
         if (shortBy == 1 || shortBy == -1) {
             TextView lecturesTextView = (TextView) view.findViewById(R.id.list_item_short_by_lectures_textview);
-            lecturesTextView.setText(" class");
+            lecturesTextView.setText(" lecture");
         } else {
             TextView lecturesTextView = (TextView) view.findViewById(R.id.list_item_short_by_lectures_textview);
             lecturesTextView.setText(" lectures");
         }
     }
 
-    public void buttonClicked(boolean present, Cursor cursor) {
+    private void buttonClicked(boolean present, Cursor cursor) {
         Course c1 = new Course();
 
         long columnID = cursor.getLong(cursor.getColumnIndex(DatabaseHelper._ID));
@@ -202,11 +195,10 @@ public class MyCourseAdapter extends SimpleCursorAdapter {
         c1.setCourseName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COURSENAME)));
         c1.setTotalLectures(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.TOTALLECTURES)) + 1);
 
-        if (present == true)
+        if (present)
             c1.setLecturesAttended(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.LECTURESATTENDED)) + 1);
         else
             c1.setLecturesAttended(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.LECTURESATTENDED)));
-
 
         c1.setExpectedTotalLectures(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.EXPECTEDTOTALLECTURES)));
         if (c1.getExpectedTotalLectures() == c1.getTotalLectures() - 1)
@@ -214,10 +206,10 @@ public class MyCourseAdapter extends SimpleCursorAdapter {
 
         c1.setMinimumAttendanceRequired(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.MINIMUMATTENDANCEREQUIRED)));
 
-        long l = dbManager.update(c1, columnID);
+        dbManager.update(c1, columnID);
     }
 
-    public Course getCourseFromDatabase(Cursor cursor) {
+    private Course getCourseFromDatabase(Cursor cursor) {
         Course course = new Course();
 
         course.setCourseCode(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COURSECODE)));
@@ -230,7 +222,7 @@ public class MyCourseAdapter extends SimpleCursorAdapter {
         return course;
     }
 
-    public void addLecture(boolean present, Cursor cursor) {
+    private void addLecture(boolean present, Cursor cursor) {
         Lecture lecture = new Lecture();
 
         lecture.setCourseID(cursor.getLong(cursor.getColumnIndex(DatabaseHelper._ID)));

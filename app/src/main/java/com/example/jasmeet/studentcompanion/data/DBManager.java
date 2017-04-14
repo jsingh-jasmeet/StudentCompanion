@@ -17,15 +17,10 @@ import java.util.List;
  */
 
 public class DBManager {
-
-    private static int deleteTable = 0;
-    private DatabaseHelper dbHelper;
-
-    private Context context;
-
-    private SQLiteDatabase database;
-
     private static final String TAG = "DBManager";
+    private DatabaseHelper dbHelper;
+    private Context context;
+    private SQLiteDatabase database;
 
     public DBManager(Context c) {
         context = c;
@@ -35,10 +30,6 @@ public class DBManager {
         dbHelper = new DatabaseHelper(context);
         database = dbHelper.getWritableDatabase();
         return this;
-    }
-
-    public void close() {
-        dbHelper.close();
     }
 
     public long insert(Course course) {
@@ -56,9 +47,7 @@ public class DBManager {
         else
             contentValues.put(DatabaseHelper.SAFE, 0);
 
-        long id = database.insert(DatabaseHelper.TABLE_NAME, null, contentValues);
-
-        return id;
+        return database.insert(DatabaseHelper.TABLE_NAME, null, contentValues);
     }
 
     public long insertLecture(Lecture lecture) {
@@ -78,9 +67,7 @@ public class DBManager {
         else
             contentValues.put(DatabaseHelper.SUB_SAFE, 0);
 
-        long id = database.insert(DatabaseHelper.SUB_TABLE_NAME, null, contentValues);
-
-        return id;
+        return database.insert(DatabaseHelper.SUB_TABLE_NAME, null, contentValues);
     }
 
     public Cursor fetch() {
@@ -102,7 +89,7 @@ public class DBManager {
         contentValues.put(DatabaseHelper.COURSENAME, course.getCourseName());
         contentValues.put(DatabaseHelper.LECTURESATTENDED, course.getLecturesAttended());
         contentValues.put(DatabaseHelper.TOTALLECTURES, course.getTotalLectures());
-        contentValues.put(DatabaseHelper.ATTENDANCE, (int) course.getAttendance());
+        contentValues.put(DatabaseHelper.ATTENDANCE, course.getAttendance());
         contentValues.put(DatabaseHelper.MINIMUMATTENDANCEREQUIRED, course.getMinimumAttendanceRequired());
         contentValues.put(DatabaseHelper.EXPECTEDTOTALLECTURES, course.getExpectedTotalLectures());
         if (course.isSafe())
@@ -110,9 +97,7 @@ public class DBManager {
         else
             contentValues.put(DatabaseHelper.SAFE, 0);
 
-        long i = database.update(DatabaseHelper.TABLE_NAME, contentValues, DatabaseHelper._ID + " = \"" + id + "\"", null);
-
-        return i;
+        return (long) database.update(DatabaseHelper.TABLE_NAME, contentValues, DatabaseHelper._ID + " = \"" + id + "\"", null);
     }
 
     public void delete(long id) {
@@ -121,12 +106,9 @@ public class DBManager {
     }
 
     public List<Lecture> fetchLectures(long courseID) {
-        List<Lecture> allLectureRecords = new ArrayList<Lecture>();
+        List<Lecture> allLectureRecords = new ArrayList<>();
         //Cursor cursor = db.query(TABLE_MAIN, new String[] { NAME, AGE, PHONE}, null, null, null, null, null);
-        String selectQuery = "SELECT  * FROM " + DatabaseHelper.SUB_TABLE_NAME + " WHERE " + DatabaseHelper.SUB_COURSEID + " = " + Long.toString(courseID);
-
         String[] columns = new String[]{DatabaseHelper.SUB_ID, DatabaseHelper.SUB_COURSEID, DatabaseHelper.SUB_LECTURENUMBER, DatabaseHelper.SUB_PRESENT, DatabaseHelper.SUB_LECTURESATTENDED, DatabaseHelper.SUB_ATTENDANCE, DatabaseHelper.SUB_MINIMUMATTENDANCEREQUIRED, DatabaseHelper.SUB_SAFE};
-
         String whereClause = DatabaseHelper.SUB_COURSEID + " = ?";
         String[] whereArgs = new String[]{Long.toString(courseID)};
 
@@ -140,14 +122,14 @@ public class DBManager {
                     lecture.setCourseID(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.SUB_COURSEID)));
                     lecture.setMinimumAttendanceRequired(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUB_MINIMUMATTENDANCEREQUIRED)));
                     lecture.setLectureNumber(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUB_LECTURENUMBER)));
-                    lecture.setPresent(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUB_PRESENT)) == 1 ? true : false);
+                    lecture.setPresent(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUB_PRESENT)) == 1);
                     lecture.setLecturesAttended(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.SUB_LECTURESATTENDED)));
 
                     allLectureRecords.add(lecture);
                 } while (cursor.moveToNext());
             }
+            cursor.close();
         }
-
         return allLectureRecords;
     }
 
@@ -170,7 +152,7 @@ public class DBManager {
                     lecture2.setCourseID(lectureCursor.getLong(lectureCursor.getColumnIndex(DatabaseHelper.SUB_COURSEID)));
                     lecture2.setMinimumAttendanceRequired(lectureCursor.getInt(lectureCursor.getColumnIndex(DatabaseHelper.SUB_MINIMUMATTENDANCEREQUIRED)));
                     lecture2.setLectureNumber(lectureCursor.getInt(lectureCursor.getColumnIndex(DatabaseHelper.SUB_LECTURENUMBER)));
-                    lecture2.setPresent(lectureCursor.getInt(lectureCursor.getColumnIndex(DatabaseHelper.SUB_PRESENT)) == 1 ? true : false);
+                    lecture2.setPresent(lectureCursor.getInt(lectureCursor.getColumnIndex(DatabaseHelper.SUB_PRESENT)) == 1);
                     lecture2.setLecturesAttended(lectureCursor.getInt(lectureCursor.getColumnIndex(DatabaseHelper.SUB_LECTURESATTENDED)));
 
                     lecture2.setLectureNumber(lecture2.getLectureNumber() - 1);
@@ -182,8 +164,8 @@ public class DBManager {
 
                 } while (lectureCursor.moveToNext());
             }
+            lectureCursor.close();
         }
-
 
         String[] courseColumns = new String[]{DatabaseHelper._ID, DatabaseHelper.COURSECODE, DatabaseHelper.COURSENAME, DatabaseHelper.LECTURESATTENDED, DatabaseHelper.TOTALLECTURES, DatabaseHelper.ATTENDANCE, DatabaseHelper.MINIMUMATTENDANCEREQUIRED, DatabaseHelper.EXPECTEDTOTALLECTURES, DatabaseHelper.SAFE};
 
@@ -214,6 +196,7 @@ public class DBManager {
 
                 } while (courseCursor.moveToNext());
             }
+            courseCursor.close();
         }
     }
 
@@ -235,8 +218,6 @@ public class DBManager {
         else
             contentValues.put(DatabaseHelper.SUB_SAFE, 0);
 
-        long i = database.update(DatabaseHelper.SUB_TABLE_NAME, contentValues, DatabaseHelper.SUB_COURSEID + " = \"" + lecture.getCourseID() + "\" AND " + DatabaseHelper.SUB_LECTURENUMBER + " = \"" + lectureNumber + "\"", null);
-
-        return i;
+        return (long) database.update(DatabaseHelper.SUB_TABLE_NAME, contentValues, DatabaseHelper.SUB_COURSEID + " = \"" + lecture.getCourseID() + "\" AND " + DatabaseHelper.SUB_LECTURENUMBER + " = \"" + lectureNumber + "\"", null);
     }
 }

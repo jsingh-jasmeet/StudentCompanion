@@ -15,10 +15,10 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.jasmeet.studentcompanion.helper.ChartHandler;
 import com.example.jasmeet.studentcompanion.R;
 import com.example.jasmeet.studentcompanion.adapters.LectureAdapter;
 import com.example.jasmeet.studentcompanion.data.DBManager;
+import com.example.jasmeet.studentcompanion.helper.ChartHandler;
 import com.example.jasmeet.studentcompanion.helper.LectureTouchHelper;
 import com.example.jasmeet.studentcompanion.helper.RecyclerViewDividerItemDecoration;
 import com.example.jasmeet.studentcompanion.models.Course;
@@ -35,18 +35,17 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class ViewCourseActivity extends AppCompatActivity {
 
+    private static final String TAG = "ViewCourseActivity";
+    boolean didScroll;
+    boolean didScrollStateChange;
+    boolean triggered;
     private Context ctx = this;
     private View lastSelectedItem;
     private RecyclerView recyclerView;
     private LinearLayoutManager llm = new LinearLayoutManager(this);
-    private static final String TAG = "ViewCourseActivity";
     private Entry entry;
     private LectureAdapter adapter;
     private Course course;
-
-    boolean didScroll;
-    boolean didScrollStateChange;
-    boolean triggered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +78,8 @@ public class ViewCourseActivity extends AppCompatActivity {
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(recyclerView);
 
-        if (myData != null) {
-            ChartHandler ch = new ChartHandler(this, course);
-            ch.setUpChart(myData);
-        }
+        ChartHandler ch = new ChartHandler(this, course);
+        ch.setUpChart(myData);
 
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -94,7 +91,7 @@ public class ViewCourseActivity extends AppCompatActivity {
 
                 if (recyclerView.findViewHolderForLayoutPosition((int) e.getX() - 1) != null) {
                     boolean scroll = listenToScroll(e, true);
-                    if (!scroll && didScroll == false) {
+                    if (!scroll && !didScroll) {
                         recyclerView.findViewHolderForLayoutPosition((int) e.getX() - 1).itemView.setTag(new LectureTag(0));
                         recyclerView.findViewHolderForLayoutPosition((int) e.getX() - 1).itemView.callOnClick();
                     }
@@ -137,7 +134,7 @@ public class ViewCourseActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == SCROLL_STATE_IDLE && didScrollStateChange == false && triggered == true) {
+                if (newState == SCROLL_STATE_IDLE && !didScrollStateChange && triggered) {
 
                     if (recyclerView.findViewHolderForLayoutPosition((int) entry.getX() - 1) != null) {
                         int color = Color.TRANSPARENT;
@@ -177,7 +174,7 @@ public class ViewCourseActivity extends AppCompatActivity {
 
         if (recyclerView.findViewHolderForLayoutPosition(position) != null) {
             boolean scroll = listenToScroll(new Entry(position, 0), true);
-            if (!scroll && didScroll == false) {
+            if (!scroll && !didScroll) {
                 recyclerView.findViewHolderForLayoutPosition(position).itemView.setTag(new LectureTag(0));
                 recyclerView.findViewHolderForLayoutPosition(position).itemView.callOnClick();
             }
@@ -207,5 +204,4 @@ public class ViewCourseActivity extends AppCompatActivity {
         lectureHeaderAttendedTextView.setWidth((int) (displayMetrics.widthPixels * 0.25));
         lectureHeaderAttendanceTextView.setWidth((int) (displayMetrics.widthPixels * 0.25));
     }
-
 }

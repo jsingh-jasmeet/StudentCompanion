@@ -8,6 +8,17 @@ import android.os.Parcelable;
  */
 
 public class Course implements Parcelable {
+    public static final Parcelable.Creator<Course> CREATOR = new Parcelable.Creator<Course>() {
+        @Override
+        public Course createFromParcel(Parcel source) {
+            return new Course(source);
+        }
+
+        @Override
+        public Course[] newArray(int size) {
+            return new Course[size];
+        }
+    };
     private String mCourseCode;
     private String mCourseName;
     private int mLecturesAttended;
@@ -28,61 +39,51 @@ public class Course implements Parcelable {
         mSafe = false;
     }
 
-    public void setCourseCode(String courseCode) {
-        mCourseCode = courseCode;
-    }
-
-    public void setCourseName(String courseName) {
-        mCourseName = courseName;
-    }
-
-    public void setLecturesAttended(int LecturesAttended) {
-        mLecturesAttended = LecturesAttended;
-        mAttendance = (int) ((double) mLecturesAttended / mTotalLectures * 100);
-
-        if (mAttendance < mMinimumAttendanceRequired)
-            mSafe = false;
-        else
-            mSafe = true;
-    }
-
-    public void setTotalLectures(int TotalLectures) {
-        mTotalLectures = TotalLectures;
-        mAttendance = (int) ((double) mLecturesAttended / mTotalLectures * 100);
-
-        if (mAttendance < mMinimumAttendanceRequired)
-            mSafe = false;
-        else
-            mSafe = true;
-    }
-
-    public void setMinimumAttendanceRequired(int minimumAttendanceRequired) {
-        mMinimumAttendanceRequired = minimumAttendanceRequired;
-
-        if (mAttendance < mMinimumAttendanceRequired)
-            mSafe = false;
-        else
-            mSafe = true;
-    }
-
-    public void setExpectedTotalLectures(int expectedTotalLectures) {
-        mExpectedTotalLectures = expectedTotalLectures;
+    public Course(Parcel in) {
+        mCourseCode = in.readString();
+        mCourseName = in.readString();
+        mLecturesAttended = in.readInt();
+        mTotalLectures = in.readInt();
+        mAttendance = in.readInt();
+        mMinimumAttendanceRequired = in.readInt();
+        mExpectedTotalLectures = in.readInt();
+        mSafe = in.readByte() != 0;
     }
 
     public String getCourseCode() {
         return mCourseCode;
     }
 
+    public void setCourseCode(String courseCode) {
+        mCourseCode = courseCode;
+    }
+
     public String getCourseName() {
         return mCourseName;
+    }
+
+    public void setCourseName(String courseName) {
+        mCourseName = courseName;
     }
 
     public int getLecturesAttended() {
         return mLecturesAttended;
     }
 
+    public void setLecturesAttended(int LecturesAttended) {
+        mLecturesAttended = LecturesAttended;
+        mAttendance = (int) ((double) mLecturesAttended / mTotalLectures * 100);
+        mSafe = mAttendance >= mMinimumAttendanceRequired;
+    }
+
     public int getTotalLectures() {
         return mTotalLectures;
+    }
+
+    public void setTotalLectures(int TotalLectures) {
+        mTotalLectures = TotalLectures;
+        mAttendance = (int) ((double) mLecturesAttended / mTotalLectures * 100);
+        mSafe = mAttendance >= mMinimumAttendanceRequired;
     }
 
     public int getAttendance() {
@@ -93,8 +94,17 @@ public class Course implements Parcelable {
         return mMinimumAttendanceRequired;
     }
 
+    public void setMinimumAttendanceRequired(int minimumAttendanceRequired) {
+        mMinimumAttendanceRequired = minimumAttendanceRequired;
+        mSafe = mAttendance >= mMinimumAttendanceRequired;
+    }
+
     public int getExpectedTotalLectures() {
         return mExpectedTotalLectures;
+    }
+
+    public void setExpectedTotalLectures(int expectedTotalLectures) {
+        mExpectedTotalLectures = expectedTotalLectures;
     }
 
     public boolean isSafe() {
@@ -113,34 +123,9 @@ public class Course implements Parcelable {
         parcel.writeByte((byte) (mSafe ? 1 : 0));
     }
 
-    public Course(Parcel in) {
-        mCourseCode = in.readString();
-        mCourseName = in.readString();
-        mLecturesAttended = in.readInt();
-        mTotalLectures = in.readInt();
-        mAttendance = in.readInt();
-        mMinimumAttendanceRequired = in.readInt();
-        mExpectedTotalLectures = in.readInt();
-        mSafe = in.readByte() != 0;
-    }
-
-    public static final Parcelable.Creator<Course> CREATOR = new Parcelable.Creator<Course>() {
-        @Override
-        public Course createFromParcel(Parcel source) {
-            return new Course(source);
-        }
-
-        @Override
-        public Course[] newArray(int size) {
-            return new Course[size];
-        }
-    };
-
     @Override
     public int describeContents() {
         // TODO Auto-generated method stub
         return 0;
     }
-
-
 }

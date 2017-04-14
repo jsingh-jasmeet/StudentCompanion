@@ -24,74 +24,40 @@ public class Lecture {
         mSafe = false;
     }
 
-    public Lecture(long courseID, int lectureNumber, boolean present, int lecturesAttended, int minimumAttendanceRequired) {
-        mCourseID = courseID;
-        mLectureNumber = lectureNumber;
-        //mDate =
-        mPresent = present;
-        mLecturesAttended = lecturesAttended;
-        mAttendance = (int) ((double) mLecturesAttended / mLectureNumber * 100);
-        mMinimumAttendanceRequired = minimumAttendanceRequired;
-
-        if (mAttendance < mMinimumAttendanceRequired)
-            mSafe = false;
-        else
-            mSafe = true;
+    public long getCourseID() {
+        return mCourseID;
     }
 
     public void setCourseID(long courseID) {
         mCourseID = courseID;
     }
 
-    public void setLectureNumber(int lectureNumber) {
-        mLectureNumber = lectureNumber;
-
-        mAttendance = (int) ((double) mLecturesAttended / mLectureNumber * 100);
-
-        if (mAttendance < mMinimumAttendanceRequired)
-            mSafe = false;
-        else
-            mSafe = true;
-    }
-
-    public void setPresent(boolean present) {
-        mPresent = present;
-    }
-
-    public void setLecturesAttended(int lecturesAttended) {
-        mLecturesAttended = lecturesAttended;
-
-        mAttendance = (int) ((double) mLecturesAttended / mLectureNumber * 100);
-
-        if (mAttendance < mMinimumAttendanceRequired)
-            mSafe = false;
-        else
-            mSafe = true;
-    }
-
-    public void setMinimumAttendanceRequired(int minimumAttendanceRequired) {
-        mMinimumAttendanceRequired = minimumAttendanceRequired;
-
-        if (mAttendance < mMinimumAttendanceRequired)
-            mSafe = false;
-        else
-            mSafe = true;
-    }
-
-    public long getCourseID() {
-        return mCourseID;
-    }
-
     public int getLectureNumber() {
         return mLectureNumber;
+    }
+
+    public void setLectureNumber(int lectureNumber) {
+        mLectureNumber = lectureNumber;
+        mAttendance = (int) ((double) mLecturesAttended / mLectureNumber * 100);
+        mSafe = mAttendance >= mMinimumAttendanceRequired;
     }
 
     public boolean isPresent() {
         return mPresent;
     }
 
+    public void setPresent(boolean present) {
+        mPresent = present;
+    }
+
     public int getLecturesAttended() {
         return mLecturesAttended;
+    }
+
+    public void setLecturesAttended(int lecturesAttended) {
+        mLecturesAttended = lecturesAttended;
+        mAttendance = (int) ((double) mLecturesAttended / mLectureNumber * 100);
+        mSafe = mAttendance >= mMinimumAttendanceRequired;
     }
 
     public int getAttendance() {
@@ -100,6 +66,11 @@ public class Lecture {
 
     public int getMinimumAttendanceRequired() {
         return mMinimumAttendanceRequired;
+    }
+
+    public void setMinimumAttendanceRequired(int minimumAttendanceRequired) {
+        mMinimumAttendanceRequired = minimumAttendanceRequired;
+        mSafe = mAttendance >= mMinimumAttendanceRequired;
     }
 
     public boolean isSafe() {

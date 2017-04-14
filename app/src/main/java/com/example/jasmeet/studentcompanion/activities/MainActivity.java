@@ -4,8 +4,8 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,21 +13,21 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import com.example.jasmeet.studentcompanion.R;
+import com.example.jasmeet.studentcompanion.adapters.MyCourseAdapter;
 import com.example.jasmeet.studentcompanion.adapters.MyLoader;
 import com.example.jasmeet.studentcompanion.data.DBManager;
 import com.example.jasmeet.studentcompanion.data.DatabaseHelper;
-import com.example.jasmeet.studentcompanion.adapters.MyCourseAdapter;
-import com.example.jasmeet.studentcompanion.R;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MainActivity";
-    private DBManager dbManager;
+    private static final int LOADER_ID = 1;
     private static int i = 0;
+    MyLoader myLoader;
+    private DBManager dbManager;
     private ListView listView;
     private SimpleCursorAdapter adapter;
-    private static final int LOADER_ID = 1;
-    MyLoader myLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +54,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
 
     @Override

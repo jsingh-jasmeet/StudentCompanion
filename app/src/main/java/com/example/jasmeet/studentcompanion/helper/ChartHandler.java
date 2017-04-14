@@ -191,5 +191,4 @@ public class ChartHandler {
     private int computeAttendance(int lecturesAttended, int totalLectures) {
         return (int) ((double) lecturesAttended / totalLectures * 100);
     }
-
 }

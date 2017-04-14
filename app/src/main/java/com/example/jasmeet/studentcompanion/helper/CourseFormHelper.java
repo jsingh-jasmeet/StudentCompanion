@@ -25,7 +25,6 @@ public class CourseFormHelper {
         this.activity = act;
         originalCourse = course;
         ID = id;
-
         dbManager = new DBManager(act.getBaseContext());
         dbManager.open();
     }
@@ -103,7 +102,6 @@ public class CourseFormHelper {
             lecture.setLecturesAttended(originalCourse.getLecturesAttended());
 
             dbManager.insertLecture(lecture);
-
             originalCourse.setTotalLectures(originalCourse.getTotalLectures() + 1);
         }
 
@@ -128,15 +126,12 @@ public class CourseFormHelper {
                 dbManager.updateLecture(lecture, lecture.getLectureNumber());
                 i++;
             }
-
             originalCourse.setLecturesAttended(originalCourse.getLecturesAttended() - 1);
         }
 
         while (originalCourse.getLecturesAttended() < newCourseValues.getLecturesAttended()) {
             myData = dbManager.fetchLectures(ID);
-
             int i = originalCourse.getTotalLectures() - 1;
-
             Lecture lecture = myData.get(i);
 
             while (lecture.isPresent()) {
@@ -155,12 +150,10 @@ public class CourseFormHelper {
                 dbManager.updateLecture(lecture, lecture.getLectureNumber());
                 i++;
             }
-
             originalCourse.setLecturesAttended(originalCourse.getLecturesAttended() + 1);
         }
 
         if (originalCourse.getMinimumAttendanceRequired() != newCourseValues.getMinimumAttendanceRequired()) {
-
             myData = dbManager.fetchLectures(ID);
             int i = 0;
 
@@ -169,10 +162,7 @@ public class CourseFormHelper {
                 lecture.setMinimumAttendanceRequired(newCourseValues.getMinimumAttendanceRequired());
                 dbManager.updateLecture(lecture, lecture.getLectureNumber());
             }
-
         }
         dbManager.update(newCourseValues, ID);
     }
-
-
 }
