@@ -56,6 +56,7 @@ public class ViewCourseActivity extends AppCompatActivity {
 
         long ID = intent.getLongExtra("id", 0);
         course = intent.getParcelableExtra("course");
+        setTitle(course.getCourseName());
 
         setWidths();
 
@@ -78,8 +79,10 @@ public class ViewCourseActivity extends AppCompatActivity {
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(recyclerView);
 
-        ChartHandler ch = new ChartHandler(this, course);
-        ch.setUpChart(myData);
+        if (myData.size() != 0) {
+            ChartHandler ch = new ChartHandler(this, course);
+            ch.setUpChart(myData);
+        }
 
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -199,8 +202,8 @@ public class ViewCourseActivity extends AppCompatActivity {
         TextView lectureHeaderAttendedTextView = (TextView) findViewById(R.id.lecture_header_attended);
         TextView lectureHeaderAttendanceTextView = (TextView) findViewById(R.id.lecture_header_attendance);
 
-        lectureHeaderLectureNumberTextView.setWidth((int) (displayMetrics.widthPixels * 0.15));
-        lectureHeaderStatusTextView.setWidth((int) (displayMetrics.widthPixels * 0.35));
+        lectureHeaderLectureNumberTextView.setWidth((int) (displayMetrics.widthPixels * 0.17));
+        lectureHeaderStatusTextView.setWidth((int) (displayMetrics.widthPixels * 0.33));
         lectureHeaderAttendedTextView.setWidth((int) (displayMetrics.widthPixels * 0.25));
         lectureHeaderAttendanceTextView.setWidth((int) (displayMetrics.widthPixels * 0.25));
     }

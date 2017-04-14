@@ -54,8 +54,8 @@ public class LectureAdapter extends RecyclerView.Adapter<LectureAdapter.MyViewHo
         view = LayoutInflater.from(context).inflate(R.layout.lecture_list_item, null);
         MyViewHolder myViewHolder = new MyViewHolder(view);
 
-        myViewHolder.lectureNumberTextView.setWidth((int) (displayMetrics.widthPixels * 0.15));
-        myViewHolder.statusTextView.setWidth((int) (displayMetrics.widthPixels * 0.35));
+        myViewHolder.lectureNumberTextView.setWidth((int) (displayMetrics.widthPixels * 0.17));
+        myViewHolder.statusTextView.setWidth((int) (displayMetrics.widthPixels * 0.33));
         myViewHolder.lecturesAttendedTextView.setWidth((int) (displayMetrics.widthPixels * 0.25));
         myViewHolder.attendanceTextView.setWidth((int) (displayMetrics.widthPixels * 0.25));
 

@@ -11,22 +11,21 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.jasmeet.studentcompanion.helper.CourseFormHelper;
 import com.example.jasmeet.studentcompanion.R;
+import com.example.jasmeet.studentcompanion.helper.CourseFormHelper;
 import com.example.jasmeet.studentcompanion.models.Course;
 
 public class CourseFormActivity extends AppCompatActivity {
 
     private static final String TAG = "CourseFormActivity";
+    ArrayAdapter<CharSequence> adapter;
     private long ID;
     private Course originalCourse;
 
-    ArrayAdapter<CharSequence> adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setTitle("Add Course");
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_form);
 
         Spinner minimumAttendanceRequiredSpinner = (Spinner) findViewById(R.id.minimum_attendance_required_spinner);
@@ -39,6 +38,7 @@ public class CourseFormActivity extends AppCompatActivity {
 
         if (extras != null) {
             if (extras.containsKey("id")) {
+                setTitle("Edit Course");
                 ID = intent.getLongExtra("id", 0);
                 originalCourse = intent.getParcelableExtra("course");
                 setValues(originalCourse);

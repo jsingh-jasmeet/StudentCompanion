@@ -12,7 +12,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -46,8 +45,8 @@ public class ChartHandler {
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        YAxis yAxis = chart.getAxisLeft();
-        yAxis.setValueFormatter(new YAxisValueFormatter());
+        chart.getAxisLeft().setValueFormatter(new YAxisValueFormatter());
+        chart.getAxisRight().setValueFormatter(new YAxisValueFormatter());
 
         List<Entry> entries = new ArrayList<>();
         List<Entry> emptyEntries = new ArrayList<>();
@@ -129,7 +128,7 @@ public class ChartHandler {
         minimumAttendanceLine.setLineColor(Color.parseColor("#999999"));
         minimumAttendanceLine.enableDashedLine(20, 20, 0);
         minimumAttendanceLine.setLineWidth((float) 1.25);
-        yAxis.addLimitLine(minimumAttendanceLine);
+        chart.getAxisLeft().addLimitLine(minimumAttendanceLine);
 
         LimitLine totalLecturesLine = new LimitLine(myData.size(), "");
         totalLecturesLine.setLineColor(Color.parseColor("#999999"));
